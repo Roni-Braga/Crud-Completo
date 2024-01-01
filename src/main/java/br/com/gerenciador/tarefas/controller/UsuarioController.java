@@ -36,11 +36,11 @@ public class UsuarioController {
 	public String  cadastrarUsuario( Usuario usuario) {
 		
 		 UsuarioRepository.save(usuario);
-		return "redirect:/CadastrarUsuario";
+		return "redirect:/cadastrarUsuario";
 	
 	}
-	@GetMapping("/usuarios")
-	public ModelAndView istAllUsuarios() {
+	@GetMapping("/")
+	public ModelAndView listAllUsuarios() {
 		ModelAndView mv = new ModelAndView("index");
 		List<Usuario> usuarios = UsuarioRepository.findAll();
 		mv.addObject("usuario", usuarios);
