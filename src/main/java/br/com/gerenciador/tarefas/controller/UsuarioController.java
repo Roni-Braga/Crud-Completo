@@ -5,8 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,32 +14,37 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
 import br.com.gerenciador.tarefas.model.*;
 import br.com.gerenciador.tarefas.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 
-@RestController
-@RequestMapping("usuario")
+@Controller
 public class UsuarioController {
 	
 	@Autowired
 	UsuarioRepository UsuarioRepository;
 
-		
-	@PostMapping
-	@Transactional
-	public ResponseEntity<Usuario>  cadastrarUsuario(@RequestBody Usuario usuario) {
-		
-		var usuarioCadastrado = UsuarioRepository.save(usuario);
-		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCadastrado);
-		
-	}
+	@RequestMapping("/cadastrarUsuario")
 	@GetMapping
-	public ResponseEntity<List<Usuario>>  listAllUsuarios() {
+	public String form() {
+		return"usuario/CadastrarUsuario";
+	}
+	@PostMapping("/cadastrarUsuario")
+	@Transactional
+	public String  cadastrarUsuario( Usuario usuario) {
 		
+		 UsuarioRepository.save(usuario);
+		return "redirect:/cadastrarUsuario";
+	
+	}
+	@GetMapping("/")
+	public ModelAndView listAllUsuarios() {
+		ModelAndView mv = new ModelAndView("index");
 		List<Usuario> usuarios = UsuarioRepository.findAll();
-		return ResponseEntity.status(HttpStatus.OK).body(usuarios);
+		mv.addObject("usuario", usuarios);
+		return mv;
 	}
 	
 	@DeleteMapping
