@@ -22,23 +22,27 @@ import jakarta.transaction.Transactional;
 
 @Controller
 public class UsuarioController {
-	
+
 	@Autowired
 	UsuarioRepository UsuarioRepository;
 
 	@RequestMapping("/cadastrarUsuario")
 	@GetMapping
 	public String form() {
-		return"usuario/CadastrarUsuario";
+		return "usuario/CadastrarUsuario";
 	}
+	
+
 	@PostMapping("/cadastrarUsuario")
 	@Transactional
-	public String  cadastrarUsuario( Usuario usuario) {
-		
-		 UsuarioRepository.save(usuario);
+	public String cadastrarUsuario(Usuario usuario) {
+
+		UsuarioRepository.save(usuario);
 		return "redirect:/cadastrarUsuario";
-	
+
 	}
+	
+
 	@GetMapping("/")
 	public ModelAndView listAllUsuarios() {
 		ModelAndView mv = new ModelAndView("index");
@@ -46,35 +50,37 @@ public class UsuarioController {
 		mv.addObject("usuario", usuarios);
 		return mv;
 	}
-	
-	@DeleteMapping
-	public ResponseEntity excluirUsuario(@RequestParam String id) {
+
+	@RequestMapping("/deletar")
+	public String excluirUsuario(String id) {
 		UsuarioRepository.deleteById(id);
-		return ResponseEntity.status(HttpStatus.OK).body("Usuário deletado com Sucesso");
-		
+		return "redirect:/";
+
 	}
+
 	@GetMapping("buscarPorId")
 	public ResponseEntity buscarUsuarioPorId(@RequestParam String id) {
 		Optional<Usuario> usuario = UsuarioRepository.findById(id);
 		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
+
 	@PutMapping
 	@Transactional
-	public ResponseEntity<?>  atualizarUsuario(@RequestBody Usuario usuario) {
-		if(usuario.getId() == null) {
+	public ResponseEntity<?> atualizarUsuario(@RequestBody Usuario usuario) {
+		if (usuario.getId() == null) {
 			return ResponseEntity.status(HttpStatus.OK).body("Informe o usuário que você deseja excluir");
 		}
 		var usuarioAtualizado = UsuarioRepository.saveAndFlush(usuario);
 		return ResponseEntity.status(HttpStatus.CREATED).body(usuarioAtualizado);
-		
+
 	}
+
 	@GetMapping("BuscarPorNome")
-	public ResponseEntity<List<Usuario>> buscarUsuarioPorNome(@RequestParam String name){
-		
+	public ResponseEntity<List<Usuario>> buscarUsuarioPorNome(@RequestParam String name) {
+
 		List<Usuario> usuario = UsuarioRepository.findByName(name.trim().toUpperCase());
-		
+
 		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
-		
-	}
-	
+
+}
